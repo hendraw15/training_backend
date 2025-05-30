@@ -1,0 +1,35 @@
+services:
+  training_postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
+  training_redis:
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data
+
+  training_backend:
+    build:
+      context: ./training_backend
+    ports:
+      - "3000:3000"
+    environment:
+      DB_POSTGRES_HOST: training_postgres
+      DB_POSTGRES_USERNAME: postgres
+      DB_POSTGRES_PASSWORD: postgres
+      DB_POSTGRES_DBNAME: training_backend
+      DB_POSTGRES_PORT: 5432
+      DB_REDIS_HOST: training_redis
+      DB_REDIS_PORT: 6379
+
+volumes:
+  postgres_data:
+  redis_data:
